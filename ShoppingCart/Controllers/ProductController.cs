@@ -85,7 +85,8 @@ public class ProductController : Controller
             product.Stock,
             product.Image,
             product.Price,
-            product.Author
+            product.Author,
+            product.Description
         });
     }
 }

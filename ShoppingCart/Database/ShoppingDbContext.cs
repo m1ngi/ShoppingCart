@@ -5,7 +5,7 @@ using ShoppingCart.Interfaces;
 
 namespace ShoppingCart.Database;
 
-public class ShoppingDbContext : DbContext, IRepository<Product>, IRepository<Cart>, IRepository<Category>
+public class ShoppingDbContext : DbContext, IRepository<Product>, IRepository<User>, IRepository<Cart>, IRepository<Category>
 {
     public ShoppingDbContext(DbContextOptions<ShoppingDbContext> options): base(options)
     {
@@ -29,4 +29,6 @@ public class ShoppingDbContext : DbContext, IRepository<Product>, IRepository<Ca
     DbSet<Cart> IRepository<Cart>.Source => Set<Cart>();
 
     DbSet<Category> IRepository<Category>.Source => Set<Category>();
+
+    DbSet<User> IRepository<User>.Source => Set<User>();
 }

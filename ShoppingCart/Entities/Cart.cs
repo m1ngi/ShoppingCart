@@ -28,6 +28,21 @@ public class Cart
         Total += item.UpdateQuantity(quantity, productPrice);
     }
 
+    public void UpdateItem(int id, int quantity)
+    {
+        var item = _items.FirstOrDefault(e => e.Id == id);
+
+        if (item == null)
+            throw new NullReferenceException();
+
+        var price = item.Product?.Price;
+
+        if (price == default)
+            throw new Exception();
+
+        Total += item.UpdateQuantity(quantity, price ?? 0);
+    }
+
     public void RemoveItem(int productId)
     {
         var item = _items.FirstOrDefault(e => e.ProductId == productId);

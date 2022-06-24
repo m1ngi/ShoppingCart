@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ShoppingCart.Database;
 using ShoppingCart.Entities;
+using ShoppingCart.Helpers;
 using ShoppingCart.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,9 +41,13 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IRepository<User>, ShoppingDbContext>();
 builder.Services.AddTransient<IRepository<Product>, ShoppingDbContext>();
 builder.Services.AddTransient<IRepository<Cart>, ShoppingDbContext>();
 builder.Services.AddTransient<IRepository<Category>, ShoppingDbContext>();
+builder.Services.AddSingleton<JwtGenerator>();
+builder.Services.AddTransient<CurrentUser>();
 
 var app = builder.Build();
 
