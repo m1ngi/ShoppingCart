@@ -22,6 +22,8 @@ public class ShoppingDbContext : DbContext, IRepository<Product>, IRepository<Ca
         base.OnModelCreating(modelBuilder);
     }
 
+    public Task Save() => this.SaveChangesAsync();
+
     public DbSet<Product> Source => Set<Product>();
 
     DbSet<Cart> IRepository<Cart>.Source => Set<Cart>();
