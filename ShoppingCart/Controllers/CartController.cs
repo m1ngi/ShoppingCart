@@ -29,7 +29,15 @@ public class CartController : Controller
     [HttpGet]
     public async Task<IActionResult> GetCurrentCart()
     {
-        var cart = await Get();
+        var cart = await _repo.Source
+            .Include(e => e.Items)
+            .ThenInclude(e => e.Product)
+            .Where(e => !e.IsCheckout)
+            .FirstOrDefaultAsync(e => e.UserId == _user.Id);
+
+        if (cart == null)
+            cart = new Cart();
+
         var result = new
         {
             cart.Total,
@@ -48,7 +56,14 @@ public class CartController : Controller
     [Route("items")]
     public async Task<IActionResult> AddItem([FromBody] CartItemRequest item)
     {
-        var cart = await Get();
+        var cart = await _repo.Source
+            .Include(e => e.Items)
+            .ThenInclude(e => e.Product)
+            .Where(e => !e.IsCheckout)
+            .FirstOrDefaultAsync(e => e.UserId == _user.Id);
+
+        if (cart == null)
+            cart = new Cart();
 
         var product = await _store.Source.FindAsync(item.ProductId);
 
@@ -71,7 +86,14 @@ public class CartController : Controller
     [Route("items")]
     public async Task<IActionResult> UpdateItem([FromBody] UpdateCartItem item)
     {
-        var cart = await Get();
+        var cart = await _repo.Source
+            .Include(e => e.Items)
+            .ThenInclude(e => e.Product)
+            .Where(e => !e.IsCheckout)
+            .FirstOrDefaultAsync(e => e.UserId == _user.Id);
+
+        if (cart == null)
+            cart = new Cart();
 
         cart.UpdateItem(item.Id, item.Quantity);
 
@@ -80,16 +102,5 @@ public class CartController : Controller
         await _repo.Save();
 
         return NoContent();
-    }
-
-    private async Task<Cart> Get()
-    {
-        var cart = await _repo.Source
-            .Include(e => e.Items)
-            .ThenInclude(e => e.Product)
-            .Where(e => !e.IsCheckout)
-            .FirstOrDefaultAsync(e => e.UserId == _user.Id);
-
-        return cart ?? new Cart();
     }
 }
