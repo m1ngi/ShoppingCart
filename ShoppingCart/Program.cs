@@ -20,6 +20,17 @@ builder.Services.AddDbContext<ShoppingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShoppingServer"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "corsConfig", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithMethods("POST", "GET", "PATCH", "DELETE");
+    });
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -54,6 +65,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+app.UseCors("corsConfig");
 
 app.UseAuthentication();
 

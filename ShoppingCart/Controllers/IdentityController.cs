@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.ApiModels;
 using ShoppingCart.Entities;
@@ -35,7 +38,7 @@ public class IdentityController : Controller
 
         var jwt = _jwt.Generate(user.Id, user.Name);
 
-        return Ok(new { jwt });
+        return Ok(new { jwt, user.Name });
     }
 
     [HttpPost]
@@ -63,9 +66,18 @@ public class IdentityController : Controller
 
             var jwt = _jwt.Generate(user.Id, user.Name);
 
-            return Ok(new { jwt });
+            return Ok(new { jwt, user.Name });
         }
 
         return BadRequest();
+    }
+
+    [HttpGet]
+    [Route("name")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public IActionResult GetName()
+    {
+        var name = HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        return Ok(new { name });
     }
 }

@@ -46,10 +46,13 @@ public class CartController : Controller
                 e.Total,
                 e.Quantity,
                 e.Id,
-                e?.Product?.Price
+                e.ProductId,
+                e.Product?.Price,
+                e.Product?.Image,
+                e.Product?.Name
             })
         };
-        return Ok(cart);
+        return Ok(result);
     }
 
     [HttpPost]
@@ -73,11 +76,14 @@ public class CartController : Controller
         cart.AddItem(item.ProductId, item.Quantity, product.Price);
 
         if (cart.Id == 0)
+        {
             await _repo.Source.AddAsync(cart);
+            cart.UserId = _user.Id;
+        }
         else
             _repo.Source.Update(cart);
 
-        await _store.Save();
+        await _repo.Save();
 
         return NoContent();
     }

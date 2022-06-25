@@ -25,7 +25,6 @@ public class ProductController : Controller
             e.Name,
             e.Image,
             e.Price,
-            e.Stock
         }).ToListAsync();
 
         return Ok(products);
